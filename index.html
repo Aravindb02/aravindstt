@@ -1,0 +1,146 @@
+<html>
+
+<head>
+  <style>
+    .hi {
+      position: absolute;
+      top: 190px; /* Adjust the top distance as needed */
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: black;
+      color: gray;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 0;
+      height: 100vh;
+      background-color: black;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #container {
+      background-color: rgba(128, 128, 128, 0.3); /* Semi-transparent gray */
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Blurred box shadow */
+      padding: 20px;
+      border-radius: 10px;
+      color: white; /* Text color in the gray box */
+    }
+
+    button {
+      margin: 10px;
+      padding: 10px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    #languageSelect {
+      font-size: 16px;
+      margin-bottom: 20px;
+    }
+
+    #transcriptContainer {
+      display: flex;
+      justify-content: center;
+    }
+
+    #currentTranscriptBox {
+  background-color: rgba(170, 77, 170, 0.608); /* Semi-transparent purple */
+  padding: 20px; /* Increase padding for a bigger box */
+  border-radius: 5px; /* Adjust border-radius for rounded corners */
+  max-width: 600px; /* Increase max-width for a wider box */
+  width: 100%;
+  backdrop-filter: blur(60px); /* Apply blur effect */
+}
+
+
+    #transcript {
+      margin: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <h1 class="hi">SPEAK TO GET TEXT</h1>
+  <div id="container">
+    <!-- Buttons for starting and stopping speech recognition -->
+    <button id="startButton">Start Speech Recognition</button>
+    <button id="stopButton">Stop Speech Recognition</button>
+
+    <!-- Dropdown for selecting language -->
+    <label for="languageSelect">Select Language:</label>
+    <select id="languageSelect">
+      <option value="en-US">English (US)</option>
+      <option value="es-ES">Spanish (Spain)</option>
+      <option value="kn-IN">Kannada (India)</option>
+      <option value="hi-IN">Hindi (India)</option>
+      <!-- Add more language options as needed -->
+    </select>
+
+    <!-- Container for transcript -->
+    <div id="transcriptContainer">
+      <div id="currentTranscriptBox">
+        <p id="transcript"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript Code -->
+  <script>
+    // Check if the browser supports the Web Speech API
+    if ('webkitSpeechRecognition' in window) {
+      var recognition = new webkitSpeechRecognition();
+      recognition.lang = 'en-US';
+      recognition.continuous = true; // Set to true for live input
+      recognition.interimResults = false;
+
+      // Event handler when speech recognition starts
+      recognition.onstart = function () {
+        console.log('Speech recognition started');
+      };
+
+      // Event handler for recognized speech
+      recognition.onresult = function (event) {
+        var currentTranscript = event.results[0][0].transcript;
+        document.getElementById('transcript').textContent = currentTranscript;
+      };
+
+      // Event handler when an error occurs
+      recognition.onerror = function (event) {
+        console.error('Speech recognition error:', event.error);
+      };
+
+      // Event handler when speech recognition ends
+      recognition.onend = function () {
+        console.log('Speech recognition ended');
+      };
+
+      // Event handler for the "Start" button
+      document.getElementById('startButton').addEventListener('click', function () {
+        // Reset the transcript field
+        document.getElementById('transcript').textContent = '';
+        recognition.start();
+      });
+
+      // Event handler for the "Stop" button
+      document.getElementById('stopButton').addEventListener('click', function () {
+        // Stop the ongoing recognition
+        recognition.stop();
+      });
+
+      // Event handler for language selection
+      document.getElementById('languageSelect').addEventListener('change', function () {
+        // Stop the ongoing recognition when the language is changed
+        recognition.stop();
+        recognition.lang = this.value;
+      });
+    } else {
+      alert('Speech recognition is not supported in this browser. Please use a supported browser like Chrome.');
+    }
+  </script>
+</body>
+
+</html>
